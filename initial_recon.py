@@ -30,9 +30,9 @@ def initialize_scene(keypoints1, keypoints2, matches):
     projMatr1 = np.array([[1,0,0,0],[0,1,0,0],[0,0,1,0]])    # 第一个相机参数
     projMatr2 = np.concatenate((R, t), axis=1)               # 第二个相机参数
     projMatr1 = np.matmul(K, projMatr1) # 相机内参 相机外参
-    projMatr2 = np.matmul(K, projMatr2) 
+    projMatr2 = np.matmul(K, projMatr2)
     points4D = cv2.triangulatePoints(projMatr1, projMatr2, pts1.T, pts2.T)
     points4D /= points4D[3]       # 归一化
     points3D = points4D.T[:,0:3]
 
-    return points3D
+    return points3D,pts2

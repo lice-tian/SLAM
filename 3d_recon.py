@@ -43,12 +43,20 @@ if __name__ == '__main__':
     first_image_matches = matches[0]
     first_keypoints = features[0][0]
     second_keypoints = features[1][0]
-    points3D = initialize_scene(first_keypoints, second_keypoints, first_image_matches)
+
+    points3D,points2D = initialize_scene(first_keypoints, second_keypoints, first_image_matches)
 
     print(points3D[0:5])
 
-    # temp = cv2.drawMatches(images[0].astype(np.uint8), first_keypoints, images[1].astype(np.uint8), second_keypoints, camera_pose, None)
+    # temp = cv2.drawMatches(images[0].astype(np.uint8), first_keypoints, images[1].astype(np.uint8), second_keypoints, None)
     # temp = cv2.resize(temp, (1280, 720))
     # cv2.imshow('temp', temp)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
+
+    # camera_pose, points_3d_recovered = solve_pnp_reconstruction(points3D, points2D)
+    # 将恢复的3D点转换为open3d的PointCloud对象并可视化
+    pcd = o3d.geometry.PointCloud()
+    # pcd.points = o3d.utility.Vector3dVector(np.array(points_3d_recovered))
+    pcd.points = o3d.utility.Vector3dVector(np.array(points3D))
+    o3d.visualization.draw_geometries([pcd])
