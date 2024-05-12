@@ -6,5 +6,12 @@ import cv2
 def extract_features(images):
     """
     """
-    
-    pass
+    sift = cv2.SIFT_create()
+
+    features = []
+    for image in images:
+        keypoints, descriptors = sift.detectAndCompute(image, None)
+        features.append([keypoints, descriptors])
+    features = np.array(features, dtype=object)
+
+    return features    
