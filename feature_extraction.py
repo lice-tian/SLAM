@@ -10,7 +10,7 @@ def extract_features(images):
 
     features = []
     for image in images:
-        keypoints, descriptors = sift.detectAndCompute(image, None)
+        keypoints, descriptors = sift.detectAndCompute(image.astype(np.uint8), None)
         features.append([keypoints, descriptors])
     features = np.array(features, dtype=object)
 
