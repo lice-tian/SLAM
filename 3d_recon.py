@@ -40,11 +40,15 @@ if __name__ == '__main__':
     matches = match_features(features)
 
     # 场景初始化
-    # 假设我们已经从matches_list中提取了前两张图像的匹配点
     first_image_matches = matches[0]
     first_keypoints = features[0][0]
     second_keypoints = features[1][0]
+    points3D = initialize_scene(first_keypoints, second_keypoints, first_image_matches)
 
-    # 调用initialize_scene函数进行场景初始化
-    # 这里需要传入匹配的特征点和对应的关键点
-    camera_pose = initialize_scene(first_keypoints, second_keypoints, first_image_matches)
+    print(points3D[0:5])
+
+    # temp = cv2.drawMatches(images[0].astype(np.uint8), first_keypoints, images[1].astype(np.uint8), second_keypoints, camera_pose, None)
+    # temp = cv2.resize(temp, (1280, 720))
+    # cv2.imshow('temp', temp)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
