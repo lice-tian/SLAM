@@ -7,9 +7,6 @@ from feature_extraction import extract_features
 from feature_matching import match_features
 from initial_recon import *
 from pnp_recon import *
-from bundle_adjustment import *
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 from bundle_adjustment import optimize_scene
 
 
@@ -54,7 +51,7 @@ if __name__ == '__main__':
     obj_colors = None
     for i in range(len(images)):
         points3D, points2D = initialize_scene(base_image_feature[0], features[i][0], matches[i], K)
-        rvec, tvec, points3D = solve_pnp_reconstruction(points3D, points2D, K)
+        rvec, tvec = solve_pnp_reconstruction(points3D, points2D, K)
         rvec, tvec, points3D = optimize_scene(rvec, tvec, points3D, points2D, K)
         colors = get_point_colors(base_image, points2D)
         
@@ -67,63 +64,32 @@ if __name__ == '__main__':
             obj_colors = colors
         else:
             obj_colors = np.vstack((obj_colors, colors))
-        
-        # break
             
 
-
-
-    # features = extract_features(images)
-    # matches = match_features(features)
-
-    # # 场景初始化
-    # image_index = 5
-    # first_image_matches = matches[image_index]
-    # first_keypoints = features[image_index][0]
-    # second_keypoints = features[image_index + 1][0]
-
-    # points3D,points2D = initialize_scene(first_keypoints, second_keypoints, first_image_matches, K)
-
-    # colors = get_point_colors(images[image_index  + 1], points2D)/255.0
-
-    # # print(points3D[0:5])
-
-    # # temp = cv2.drawMatches(images[0].astype(np.uint8), first_keypoints, images[1].astype(np.uint8), second_keypoints, None)
-    # # temp = cv2.resize(temp, (1280, 720))
-    # # cv2.imshow('temp', temp)
-    # # cv2.waitKey(0)
-    # # cv2.destroyAllWindows()
-
-    # camera_pose, points_3d_recovered, rvec, tvec = solve_pnp_reconstruction(points3D, points2D)
-
-    # K = np.loadtxt('camera_intrinsic.txt')
-    # rvec, tvec, points_3d_recovered = optimize_scene(rvec, tvec, points3D, points2D, K)
-
     # 将恢复的3D点转换为open3d的PointCloud对象并可视化
-    # pcd = o3d.geometry.PointCloud()
-    # # points_3d_recovered = points3D
-    # pcd.points = o3d.utility.Vector3dVector(obj_points)
-    # pcd.colors = o3d.utility.Vector3dVector(obj_colors)  # 设置点云的颜色
-
-    # vis = o3d.visualization.Visualizer()
-    # vis.create_window()
-
-    # # 添加点云到可视化对象
-    # vis.add_geometry(pcd)
-
-    # # 设置背景为黑色
-    # vis.get_render_option().background_color = [0, 0, 0]
-    # vis.get_render_option().point_size = 10.0  # 设置点的大小
-
-    # # 运行
-    # vis.run()
-
-    # # 销毁可视化窗口
-    # vis.close()
-
     pcd = o3d.geometry.PointCloud()
     pcd.points = o3d.utility.Vector3dVector(obj_points)
     pcd.colors = o3d.utility.Vector3dVector(obj_colors / 255.0)  # 设置点云的颜色
 
-    # 使用 draw_geometries() 函数自动渲染成球形
-    o3d.visualization.draw_geometries([pcd], point_show_normal=False, mesh_show_wireframe=False)
+    vis = o3d.visualization.Visualizer()
+    vis.create_window()
+
+    # 添加点云到可视化对象
+    vis.add_geometry(pcd)
+
+    # 设置背景为黑色
+    vis.get_render_option().background_color = [0, 0, 0]
+    vis.get_render_option().point_size = 10.0  # 设置点的大小
+
+    # 运行
+    vis.run()
+
+    # 销毁可视化窗口
+    vis.close()
+
+    # pcd = o3d.geometry.PointCloud()
+    # pcd.points = o3d.utility.Vector3dVector(obj_points)
+    # pcd.colors = o3d.utility.Vector3dVector(obj_colors / 255.0)  # 设置点云的颜色
+
+    # # 使用 draw_geometries() 函数自动渲染成球形
+    # o3d.visualization.draw_geometries([pcd], point_show_normal=False, mesh_show_wireframe=False)
