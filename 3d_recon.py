@@ -19,7 +19,7 @@ def read_images(image_folder):
     images = []
     for file_path in image_files:
         # 读入灰度图像
-        image = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE).astype(np.float32)
+        image = cv2.imread(file_path, cv2.IMREAD_COLOR).astype(np.float32)
         images.append(image)
     images = np.array(images, dtype=np.float32)
 
@@ -27,7 +27,7 @@ def read_images(image_folder):
 
 
 if __name__ == '__main__':
-    images_folder = 'images'
+    images_folder = '_images'
     images = read_images(images_folder)
 
 
@@ -42,11 +42,14 @@ if __name__ == '__main__':
     matches = match_features(features)
 
     # 场景初始化
-    first_image_matches = matches[0]
-    first_keypoints = features[0][0]
-    second_keypoints = features[1][0]
+    image_index = 5
+    first_image_matches = matches[image_index]
+    first_keypoints = features[image_index][0]
+    second_keypoints = features[image_index + 1][0]
 
     points3D,points2D = initialize_scene(first_keypoints, second_keypoints, first_image_matches)
+
+    colors = get_point_colors(images[image_index], points2D)/255.0
 
     print(points3D[0:5])
 
@@ -60,9 +63,26 @@ if __name__ == '__main__':
 
     # 将恢复的3D点转换为open3d的PointCloud对象并可视化
     pcd = o3d.geometry.PointCloud()
-    # pcd.points = o3d.utility.Vector3dVector(np.array(points_3d_recovered))
-    pcd.points = o3d.utility.Vector3dVector(np.array(points3D) * 1000)
-    o3d.visualization.draw_geometries([pcd])
+    # points_3d_recovered = points3D
+    pcd.points = o3d.utility.Vector3dVector(points_3d_recovered)
+    pcd.colors = o3d.utility.Vector3dVector(colors)  # 设置点云的颜色
+
+    vis = o3d.visualization.Visualizer()
+    vis.create_window()
+
+    # 添加点云到可视化对象
+    vis.add_geometry(pcd)
+
+    # 设置背景为黑色
+    vis.get_render_option().background_color = [0, 0, 0]
+    vis.get_render_option().point_size = 10.0  # 设置点的大小
+
+    # 运行
+    vis.run()
+
+    # 销毁可视化窗口
+    vis.destroy()
+
 
     # # 可视化三维点
     # fig = plt.figure()

@@ -43,4 +43,5 @@ def initialize_scene(keypoints1, keypoints2, matches):
     # points3D = points4D_homogeneous[:3] / points4D_homogeneous[3]
     # points3D = points3D.T
 
-    return points3D, good
+    # return points3D, good
+    return points3D, pts1
