@@ -5,7 +5,7 @@
 import numpy as np
 import cv2
 
-def initialize_scene(keypoints1, keypoints2, matches):
+def initialize_scene(keypoints1, keypoints2, matches, K):
     # 初步筛选匹配点
     good = []
     pts1 = []
@@ -14,12 +14,9 @@ def initialize_scene(keypoints1, keypoints2, matches):
         if m.distance < 0.7 * n.distance:
             good.append(m)
             pts1.append(keypoints1[m.queryIdx].pt)
-            pts2.append(keypoints2[m.queryIdx].pt)
+            pts2.append(keypoints2[m.trainIdx].pt)
     pts1 = np.array(pts1)
     pts2 = np.array(pts2)
-
-    # 相机内参矩阵
-    K = np.loadtxt('camera_intrinsic.txt')
 
     # 计算本质矩阵 E
     E, _ = cv2.findEssentialMat(pts1, pts2, K)
@@ -43,5 +40,4 @@ def initialize_scene(keypoints1, keypoints2, matches):
     # points3D = points4D_homogeneous[:3] / points4D_homogeneous[3]
     # points3D = points3D.T
 
-    # return points3D, good
-    return points3D, pts1
+    return points3D, pts2

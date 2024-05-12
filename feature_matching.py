@@ -4,7 +4,7 @@
 import cv2
 import numpy as np
 
-def match_features(features):
+def match_features(features, base=None):
     """
     """
 
@@ -14,18 +14,21 @@ def match_features(features):
 
     flann = cv2.FlannBasedMatcher(index_params, search_params)
 
-    # 暂时不清楚需要匹配哪几张图片
     all_matches = []
-    for feature1, feature2 in zip(features, features[1:]):
-        matches = flann.knnMatch(feature1[1], feature2[1], k=2)
-        
-        # good_matches = []
-        # for m, n in matches:
-        #     if m.distance < 0.7 * n.distance:
-        #         good_matches.append(m)
-        
+    for feature in features:
+        matches = flann.knnMatch(base[1], feature[1], k=2)
         all_matches.append(matches)
-        # break
+
+    # for feature1, feature2 in zip(features, features[1:]):
+    #     matches = flann.knnMatch(feature1[1], feature2[1], k=2)
+        
+    #     # good_matches = []
+    #     # for m, n in matches:
+    #     #     if m.distance < 0.7 * n.distance:
+    #     #         good_matches.append(m)
+        
+    #     all_matches.append(matches)
+    #     # break
     
     all_matches = np.array(all_matches, dtype=object)
 
