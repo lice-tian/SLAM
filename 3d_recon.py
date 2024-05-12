@@ -8,6 +8,8 @@ from feature_matching import match_features
 from initial_recon import *
 from pnp_recon import *
 from bundle_adjustment import *
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 
 
@@ -40,15 +42,13 @@ if __name__ == '__main__':
     matches = match_features(features)
 
     # 场景初始化
-    first_image_matches = matches[0]
-    first_keypoints = features[0][0]
-    second_keypoints = features[1][0]
+    first_image_matches = matches[5]
+    first_keypoints = features[5][0]
+    second_keypoints = features[6][0]
 
-    points3D,points2D = initialize_scene(first_keypoints, second_keypoints, first_image_matches)
+    points3D, good = initialize_scene(first_keypoints, second_keypoints, first_image_matches)
 
-    print(points3D[0:5])
-
-    # temp = cv2.drawMatches(images[0].astype(np.uint8), first_keypoints, images[1].astype(np.uint8), second_keypoints, None)
+    # temp = cv2.drawMatches(images[0].astype(np.uint8), first_keypoints, images[1].astype(np.uint8), second_keypoints, good, None)
     # temp = cv2.resize(temp, (1280, 720))
     # cv2.imshow('temp', temp)
     # cv2.waitKey(0)
@@ -58,5 +58,20 @@ if __name__ == '__main__':
     # 将恢复的3D点转换为open3d的PointCloud对象并可视化
     pcd = o3d.geometry.PointCloud()
     # pcd.points = o3d.utility.Vector3dVector(np.array(points_3d_recovered))
-    pcd.points = o3d.utility.Vector3dVector(np.array(points3D))
+    pcd.points = o3d.utility.Vector3dVector(np.array(points3D) * 1000)
     o3d.visualization.draw_geometries([pcd])
+
+    # # 可视化三维点
+    # fig = plt.figure()
+    # ax = fig.add_subplot(111, projection='3d')
+
+    # # 绘制三维点
+    # ax.scatter(points3D[:, 0], points3D[:, 1], points3D[:, 2])
+
+    # # 设置坐标轴标签
+    # ax.set_xlabel('X')
+    # ax.set_ylabel('Y')
+    # ax.set_zlabel('Z')
+
+    # # 显示图像
+    # plt.show()

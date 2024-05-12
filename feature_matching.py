@@ -25,7 +25,7 @@ def match_features(features):
         #         good_matches.append(m)
         
         all_matches.append(matches)
-        break
+        # break
     
     all_matches = np.array(all_matches, dtype=object)
 

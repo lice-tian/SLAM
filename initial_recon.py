@@ -32,7 +32,15 @@ def initialize_scene(keypoints1, keypoints2, matches):
     projMatr1 = np.matmul(K, projMatr1) # 相机内参 相机外参
     projMatr2 = np.matmul(K, projMatr2)
     points4D = cv2.triangulatePoints(projMatr1, projMatr2, pts1.T, pts2.T)
-    points4D /= points4D[3]       # 归一化
+    # points4D /= points4D[3]       # 归一化
     points3D = points4D.T[:,0:3]
 
-    return points3D,pts2
+    # projMatr1 = np.hstack((R, t))
+    # projMatr2 = np.hstack((np.eye(3), np.zeros((3, 1))))
+    # projMatr1 = np.matmul(K, projMatr1)
+    # projMatr2 = np.matmul(K, projMatr2)
+    # points4D_homogeneous = cv2.triangulatePoints(projMatr1, projMatr2, pts1.T, pts2.T)
+    # points3D = points4D_homogeneous[:3] / points4D_homogeneous[3]
+    # points3D = points3D.T
+
+    return points3D, good
